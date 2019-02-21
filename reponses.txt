@@ -1,0 +1,8 @@
+1. On obtient le message d'erreur :
+
+bind socket_serveur: Address already in use
+accept: Bad file descriptor
+
+Et le serveur ne se relance pas.
+
+2. 
