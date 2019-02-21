@@ -1,10 +1,13 @@
-Welcome
-Bienvenue
-Velkommen
-Fàilte
-Vitaj
-Bienvenido
-Ahla w sahla
-Ulu tons maime
-Akwaaba
-Welkom
+====================================
+            Welcome
+            Bienvenue
+            Velkommen
+            Fàilte
+            Vitaj
+            Bienvenido
+            Ahla w sahla
+            Ulu tons maime
+            Akwaaba
+            Welkom
+====================================
+
