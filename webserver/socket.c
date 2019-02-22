@@ -5,8 +5,8 @@
 #include <unistd.h>
 
 int creer_serveur(int port) {
-
     int socket_server;
+    int optval = 1;
     struct sockaddr_in socketAddr;
 
     // paramètrage de la structure socketAddr
@@ -20,6 +20,12 @@ int creer_serveur(int port) {
     if (socket_server == -1) {
         perror("socket_serveur");
         return socket_server;
+    }
+
+    // Permet de redemarrer le serveur san delais (p 13 - 14)
+    if (setsockopt(socket_server, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) == -1) {
+        perror("Can not set SO_REUSEADDR option");
+        return -1;
     }
 
     // Attachement de la socket à une interface réseau et paramètrage
