@@ -10,7 +10,7 @@
 
 /* Permet d'ignorer le signal d'erreur si le client se déconnecte avant la fin du 
 write */
-void initialiser_signaux(void) {
+void initialiser_signaux() {
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
         perror("Signal");
     }
@@ -84,20 +84,31 @@ int main() {
     initialiser_signaux();
     int socket_server = creer_serveur(8080);
     int socket_client;
+    int pid;
 
     while (1) {
         socket_client = accept(socket_server, NULL, NULL);
 
-        if (socket_client == -1) {
-            perror("accept");
-            return socket_client;
+        // On créer un nouveau processus
+        pid = fork();
+        // On est dans le processus fils
+        if (pid == 0) {
+
+            if (socket_client == -1) {
+                perror("accept");
+            }
+
+            // On appelle la fonction bienvenue
+            bienvenueWithDelay(socket_client);
+            // On appelle le perroquet
+            perroquet(socket_client);
+        // Une erreur c'est produite
+        } else if (pid == -1) {
+            perror("Création du processus a échouée");
+        // On est dans le processus père
+        } else {
+            // On ferme la socket_client
+            close(socket_client);
         }
-        // On appelle la fonction bienvenue
-        // bienvenue(socket_client);
-        bienvenueWithDelay(socket_client);
-        // On appelle le perroquet
-        perroquet(socket_client);
-        // On ferme la socket_client
-        close(socket_client);
     }
 }
