@@ -1,3 +1,5 @@
+3.2.1 Test de votre programme
+
 1. On obtient le message d'erreur :
 
 bind socket_serveur: Address already in use
@@ -5,4 +7,23 @@ accept: Bad file descriptor
 
 Et le serveur ne se relance pas.
 
-2. 
+--------------------------------------------------------------------------------
+
+2. Le client s'arrête quelque secondes après son lancement, il ne reçois pas le
+message de bienvenue, et le serveur s'arrête lui aussi.
+L'option -z sert à scanner deamons (programme en arrière plan) écoutant le réseau 
+sans échanger d'inforamation avec eux.
+
+--------------------------------------------------------------------------------
+
+3. Dans ce cas on obtient le message :
+
+telnet: Unable to connect to remote host: Connection refused
+
+car le serveur n'accepte pas les adresses IPV6.
+
+--------------------------------------------------------------------------------
+
+4. Le deuxième client est mis en attente tant que le premier ne se déconecte pas.
+
+--------------------------------------------------------------------------------
