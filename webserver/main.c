@@ -4,8 +4,17 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <signal.h>
 
 #include "socket.h"
+
+/* Permet d'ignorer le signal d'erreur si le client se déconnecte avant la fin du 
+write */
+void initialiser_signaux(void) {
+    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+        perror("Signal");
+    }
+}
 
 /* Lit le ficher welcome et le transmet au client, prend la socket client en 
 paramètre, et retourne 0 si l'opération c'est passée, sinon -1*/
@@ -72,6 +81,7 @@ void perroquet(int socket_client) {
 }
 
 int main() {
+    initialiser_signaux();
     int socket_server = creer_serveur(8080);
     int socket_client;
 
