@@ -5,15 +5,39 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 #include "socket.h"
 
-/* Permet d'ignorer le signal d'erreur si le client se déconnecte avant la fin du 
-write */
+/* Fonction appelée par la structure sigaction, elle se charge de terminer un
+processus fils */
+void traitement_signal(int sig) {
+    printf("Signal %d reçu\n", sig);
+    int status;
+    waitpid(-1, &status, WNOHANG);
+}
+
+/* Gestion du comportement du serveur lors de la reception de divers signaux */
 void initialiser_signaux() {
+
+    /* Permet d'ignorer le signal lorsque le serveur utilise la fonction write et
+    que le client se déconnecte */
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
         perror("Signal");
     }
+
+    // Mise en place de la structure sigaction
+    struct sigaction str_sigaction;
+
+    str_sigaction.sa_handler = &traitement_signal;
+    sigemptyset(&str_sigaction.sa_mask);
+    str_sigaction.sa_flags = SA_RESTART;
+
+    // On vérifie si sigaction se déroule bien
+    if (sigaction(SIGCHLD, &str_sigaction, NULL) == -1) {
+        perror("sigaction(SIGCHLD)");
+    }
+    printf("tout est OK !!");
 }
 
 /* Lit le ficher welcome et le transmet au client, prend la socket client en 
