@@ -113,6 +113,35 @@ void perroquet(int descriptorClient) {
     fclose(socketClient);
 }
 
+void requetteHttp(int descriptorClient) {
+    FILE* socketClient = fdopen(descriptorClient, "w+");
+    char bufferRequest[250] = {0};
+    char bufferContent[250] = {0};
+
+    // On vérifie l'ouverture du fichier socket
+    if (socketClient == NULL) {
+        perror("Ouverture de la socket client échouée");
+    }
+    // On lit la première ligne, qui contiens la requette
+    else if (fgets(bufferRequest, 250, socketClient) == NULL) {
+        perror("fget retourne NULL");
+    }
+
+    // Lecture du contenu
+    do {
+        fgets(bufferContent, 250, socketClient);
+    } while(strcmp(bufferContent, "\r\n") != 0);
+    
+    // Réponse
+    if (strcmp(bufferRequest, "GET / HTTP/1.1\r\n") != 0) {
+        perror("400 Bad Request");
+        fprintf(socketClient, "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 17\r\n\r\n400 Bad Request\r\n\r\n");
+    }
+    else {
+        fprintf(socketClient, "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 17\r\n\r\nHello\r\n\r\n");
+    }
+}
+
 int main() {
     initialiser_signaux();
     int socket_server = creer_serveur(8080);
@@ -131,10 +160,8 @@ int main() {
                 perror("accept");
             }
 
-            // On appelle la fonction bienvenue
-            bienvenueWithDelay(socket_client);
-            // On appelle le perroquet
-            perroquet(socket_client);
+            // On appelle requetteHttp
+            requetteHttp(socket_client);
             // On ferme le processus fils
             exit(0);
         // Une erreur c'est produite
