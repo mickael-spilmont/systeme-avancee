@@ -6,11 +6,12 @@
 #include <sys/socket.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <stdlib.h>
 
 #include "socket.h"
 
-/* Fonction appelée par la structure sigaction, elle se charge de terminer un
-processus fils */
+/* Fonction appelée par la structure sigaction, elle se charge de supprimer un
+processus fils zombie */
 void traitement_signal(int sig) {
     printf("Signal %d reçu\n", sig);
     int status;
@@ -26,7 +27,8 @@ void initialiser_signaux() {
         perror("Signal");
     }
 
-    // Mise en place de la structure sigaction
+    /* Mise en place de la structure sigaction permettant de supprimer les
+    processus zombies */
     struct sigaction str_sigaction;
 
     str_sigaction.sa_handler = &traitement_signal;
@@ -37,7 +39,6 @@ void initialiser_signaux() {
     if (sigaction(SIGCHLD, &str_sigaction, NULL) == -1) {
         perror("sigaction(SIGCHLD)");
     }
-    printf("tout est OK !!");
 }
 
 /* Lit le ficher welcome et le transmet au client, prend la socket client en 
@@ -126,6 +127,8 @@ int main() {
             bienvenueWithDelay(socket_client);
             // On appelle le perroquet
             perroquet(socket_client);
+            // On ferme le processus fils
+            exit(0);
         // Une erreur c'est produite
         } else if (pid == -1) {
             perror("Création du processus a échouée");
