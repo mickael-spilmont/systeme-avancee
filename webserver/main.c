@@ -95,14 +95,22 @@ int bienvenueWithDelay(int socket_client) {
 
 /* Lit les messages du client et les lui renvoie.
 Prend en paramètre la socket_client et renvoie void */
-void perroquet(int socket_client) {
-    char buffer[80] = {0};
+void perroquet(int descriptorClient) {
+    FILE* socketClient = fdopen(descriptorClient, "w+");
+    char buffer[250] = {0};
 
-    while (read(socket_client, buffer, 79) > 0) {
-        write(socket_client, buffer, strlen(buffer));
-        // On vide le buffer
-        memset(buffer, 0, 80);
+    // On vérifie l'ouverture du fichier socket
+    if (socketClient == NULL) {
+        perror("Ouverture de la socket client échouée");
     }
+
+    // Boucle de lecture/réponse
+    while(fgets(buffer, 250, socketClient) != NULL) {
+        // Réponse du serveur
+        fprintf(socketClient, "<Pawnee> %s", buffer);
+        printf("<client %d> %s", descriptorClient, buffer);
+    }
+    fclose(socketClient);
 }
 
 int main() {
