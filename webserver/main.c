@@ -138,8 +138,9 @@ void requetteHttp(int descriptorClient) {
         fprintf(socketClient, "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 17\r\n\r\n400 Bad Request\r\n\r\n");
     }
     else {
-        fprintf(socketClient, "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 17\r\n\r\nHello\r\n\r\n");
+        fprintf(socketClient, "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: \r\n\r\nHello\r\n\r\n");
     }
+    fclose(socketClient);
 }
 
 int main() {
